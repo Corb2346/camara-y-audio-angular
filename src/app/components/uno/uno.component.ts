@@ -56,4 +56,10 @@ export class UnoComponent implements OnInit {
     
    }
 
+   startAudio(audio:HTMLAudioElement,btn:HTMLElement){
+    NavigatorHelper.startAudio(audio,btn);
+    console.log("audio" , audio);
+    
+   }
+
 }

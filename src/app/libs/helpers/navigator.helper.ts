@@ -38,7 +38,7 @@ export default class NavigatorHelper{
                 }
                 
             },
-            //audio: true
+            audio: true
 
         }).then(media =>{
             //console.log(media);
@@ -105,4 +105,44 @@ export default class NavigatorHelper{
         })
        }
 
+       static startAudio(audio: HTMLAudioElement,btn: HTMLElement){
+        navigator.mediaDevices.getUserMedia({
+            audio:true
+        }).then( audioMedia => {
+            audio.srcObject = audioMedia;
+            audio.onloadedmetadata = response => {
+                audio.play();
+                let data : any[] = [];
+                const record = new MediaRecorder( audioMedia,{mimeType: 'audio/ogg'})
+                
+                record.ondataavailable = event => {
+                    console.log("onDataAvailable");
+                    data.push(event.data)
+                }
+
+                record.onstop = () => {
+                    console.log("Onstop");
+                        const blob = new Blob(data,{type: 'audio/webm'})
+                        const url = URL.createObjectURL(blob)
+                        const elA = document.createElement('a');
+                        document.body.appendChild(elA);
+                        elA.href = url
+                        elA.download = 'audio/webm'
+                        elA.click()
+                        console.log(URL.createObjectURL(blob))
+                }   
+                setTimeout( ()=>{
+                    console.log("toStart");
+                    
+                    record.start()
+                },10)
+
+                btn.addEventListener('click' , () => {
+                    console.log("to stop ");
+                    record.stop()
+                 })
+            }
+        })
+
+    }
 }
